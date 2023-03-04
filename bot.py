@@ -1,6 +1,6 @@
 import telebot
 from extensions import APIException, Converter
-from config import TOKEN, val, cur, crip
+from config import TOKEN, val, cur, cryp
 
 
 bot = telebot.TeleBot(TOKEN)
@@ -20,7 +20,7 @@ def helper(message: telebot.types.Message):
                                       'Наличие запятых между валютами ОБЯЗАТЕЛЬНО ввиду разности валютных названий\n'
                                       'Пример правильных запросов: "доллар, рубль, 50" или "турецкая лира, йена, 100"\n'
                                       'Чтобы увидеть список валют, нажмите /values\n'
-                                      'Или /cripto, чтобы увидеть список доступных криптовалют')
+                                      'Или /crypto, чтобы увидеть список доступных криптовалют')
 
 
 @bot.message_handler(commands=['values'])
@@ -31,12 +31,17 @@ def values(message: telebot.types.Message):
     bot.reply_to(message, text)
 
 
-@bot.message_handler(commands=['cripto'])
+@bot.message_handler(commands=['crypto'])
 def values(message: telebot.types.Message):
     text = 'Доступные криптовалюты:\n'
-    for key in crip.keys():
+    for key in cryp.keys():
         text = '\n'.join((text, key))
     bot.reply_to(message, text)
+
+
+# @bot.message_handler(commands=['stop'])
+# def stop(message):
+#     bot.stop_bot()
 
 
 @bot.message_handler(content_types=['text'])
@@ -49,13 +54,22 @@ def convert(message: telebot.types.Message):
 
         quote, base, amount = value
         total_base = Converter.get_price(quote, base, amount)
+
+        if total_base is None:
+            raise APIException('Вероятнее всего, не получится конвертировать данные валюты. Приносим извинения')
+
     except APIException as e:
-        bot.reply_to(message, f'Будьте внимательнее пожалуйста ☺️\n{e}')
+        bot.reply_to(message, f'Что-то написано неправильно, проверьте, пожалуйста ☺️\n\n{e}')
     except Exception as e:
         bot.reply_to(message, f'Упс, что-то пошло не так 🥺\n{e}')
     else:
         text = f'{amount} {val[quote]} в {val[base]} - {total_base}'
         bot.reply_to(message, text)
+
+
+# @bot.message_handler(content_types=['text'])
+# def echo_reply(message: telebot.types.Message):
+#     bot.reply_to(message, message.text)
 
 
 @bot.message_handler(content_types=['voice'])
@@ -70,3 +84,4 @@ def photo_replay(message: telebot.types.Message):
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
+
