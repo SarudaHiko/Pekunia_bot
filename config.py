@@ -333,7 +333,7 @@ cur = {
     'Конголезский франк': 'CDF\n',
 }
 
-crip = {
+cryp = {
     'Bitcoin': 'BTC',
     'Etherium': 'ETH',
     'Tether': 'USDT',
