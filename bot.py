@@ -23,7 +23,7 @@ def starter(message: telebot.types.Message):
 def helper(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    logger.info(f'{user_id=} {user_name=} {time.asctime()}')
+    logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
 
     bot.send_message(message.chat.id, 'Чтобы воспользоваться конвертором, введите данные в формате:\n'
                                       '{первая валюта(откуда)}, {вторая валюта(куда)}, {количество}\n'
@@ -51,10 +51,7 @@ def values(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def convert(message: telebot.types.Message):
-    user_id = message.from_user.id
-    user_name = message.from_user.full_name
-    logger.info(f'{user_id=} {user_name=} {time.asctime()}')
-
+    global reply
     try:
         value = message.text.lower().split(', ')
 
@@ -72,8 +69,11 @@ def convert(message: telebot.types.Message):
     except Exception as e:
         bot.reply_to(message, f'Упс, что-то пошло не так 🥺\n{e}')
     else:
-        text = f'{amount} {val[quote]} в {val[base]} - {total_base}'
-        bot.reply_to(message, text)
+        reply = f'{amount} {val[quote]} в {val[base]} - {total_base}'
+        bot.reply_to(message, reply)
+
+    user_name = message.from_user.full_name
+    logger.info(f'{user_name=} | {reply=} | {time.asctime()}')
 
 
 @bot.message_handler(content_types=['voice'])
