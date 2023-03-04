@@ -39,11 +39,6 @@ def values(message: telebot.types.Message):
     bot.reply_to(message, text)
 
 
-# @bot.message_handler(commands=['stop'])
-# def stop(message):
-#     bot.stop_bot()
-
-
 @bot.message_handler(content_types=['text'])
 def convert(message: telebot.types.Message):
     try:
@@ -61,11 +56,6 @@ def convert(message: telebot.types.Message):
     else:
         text = f'{amount} {val[quote]} в {val[base]} - {total_base}'
         bot.reply_to(message, text)
-
-
-# @bot.message_handler(content_types=['text'])
-# def echo_reply(message: telebot.types.Message):
-#     bot.reply_to(message, message.text)
 
 
 @bot.message_handler(content_types=['voice'])
