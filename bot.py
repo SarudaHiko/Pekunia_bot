@@ -12,6 +12,7 @@ bot = telebot.TeleBot(TOKEN)
 def starter(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
+    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
 
     bot.reply_to(message, f"Добро пожаловать, {message.chat.first_name}!\n"
@@ -23,6 +24,7 @@ def starter(message: telebot.types.Message):
 def helper(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
+    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
 
     bot.send_message(message.chat.id, 'Чтобы воспользоваться конвертором, введите данные в формате:\n'
@@ -35,6 +37,11 @@ def helper(message: telebot.types.Message):
 
 @bot.message_handler(commands=['values'])
 def values(message: telebot.types.Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.full_name
+    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
+    logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
+    
     text = 'Доступные валюты:\n'
     for key in sorted(cur.keys()):
         text = '\n'.join((text, key))
@@ -43,6 +50,11 @@ def values(message: telebot.types.Message):
 
 @bot.message_handler(commands=['crypto'])
 def values(message: telebot.types.Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.full_name
+    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
+    logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
+    
     text = 'Доступные криптовалюты:\n'
     for key in cryp.keys():
         text = '\n'.join((text, key))
@@ -73,6 +85,7 @@ def convert(message: telebot.types.Message):
         bot.reply_to(message, reply)
 
     user_name = message.from_user.full_name
+    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_name=} | {reply=} | {time.asctime()}')
 
 
