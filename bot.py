@@ -1,4 +1,6 @@
 import telebot
+from loguru import logger
+import time
 from extensions import APIException, Converter
 from config import TOKEN, val, cur, cryp
 
@@ -7,14 +9,22 @@ bot = telebot.TeleBot(TOKEN)
 
 
 @bot.message_handler(commands=['start'])
-def start(message: telebot.types.Message):
+def starter(message: telebot.types.Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.full_name
+    logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
+
     bot.reply_to(message, f"Добро пожаловать, {message.chat.first_name}!\n"
                           'Этот бот конвертирует выбранную вами валюту и криптовалюту.\n'
-                          f"Чтобы узнать как работать с ботом, нажмите /help")
+                          "Чтобы узнать как работать с ботом, нажмите /help")
 
 
 @bot.message_handler(commands=['help'])
 def helper(message: telebot.types.Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.full_name
+    logger.info(f'{user_id=} {user_name=} {time.asctime()}')
+
     bot.send_message(message.chat.id, 'Чтобы воспользоваться конвертором, введите данные в формате:\n'
                                       '{первая валюта(откуда)}, {вторая валюта(куда)}, {количество}\n'
                                       'Наличие запятых между валютами ОБЯЗАТЕЛЬНО ввиду разности валютных названий\n'
@@ -41,6 +51,10 @@ def values(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def convert(message: telebot.types.Message):
+    user_id = message.from_user.id
+    user_name = message.from_user.full_name
+    logger.info(f'{user_id=} {user_name=} {time.asctime()}')
+
     try:
         value = message.text.lower().split(', ')
 
@@ -74,4 +88,3 @@ def photo_replay(message: telebot.types.Message):
 
 if __name__ == '__main__':
     bot.polling(none_stop=True)
-
