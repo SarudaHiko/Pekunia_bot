@@ -1,9 +1,6 @@
-import telebot
 import json
 import requests
-from config import val, TOKEN
-
-bot = telebot.TeleBot(TOKEN)
+from config import val
 
 
 class APIException(Exception):
