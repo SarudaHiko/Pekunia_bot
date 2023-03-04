@@ -49,7 +49,7 @@ def values(message: telebot.types.Message):
 
 
 @bot.message_handler(commands=['crypto'])
-def values(message: telebot.types.Message):
+def crypto(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
     logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
