@@ -1,9 +1,8 @@
 import telebot
-from loguru import logger
 import time
+from loguru import logger
 from extensions import APIException, Converter
 from config import TOKEN, val, cur, cryp
-
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -99,6 +98,11 @@ def voice_reply(message: telebot.types.Message):
 @bot.message_handler(content_types=['photo'])
 def photo_replay(message: telebot.types.Message):
     bot.reply_to(message, 'Если бы я знал, что на этой картинке, может быть мне и понравилось бы)))')
+
+
+@bot.message_handler(content_types=['*'])
+def other_reply(message: telebot.types.Message):
+    bot.reply_to(message, 'Не могу пока ответить на это')
 
 
 if __name__ == '__main__':
