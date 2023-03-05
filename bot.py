@@ -7,15 +7,16 @@ from config import TOKEN, val, cur, cryp
 
 bot = telebot.TeleBot(TOKEN)
 
+logger.add('logs.log', format='{level} | {message}', level='INFO', rotation='1 MB', compression='zip')
+
 
 @bot.message_handler(commands=['start'])
 def starter(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
 
-    bot.reply_to(message, f"Добро пожаловать, {message.chat.first_name}!\n"
+    bot.reply_to(message, f"Здравствуйте, {message.chat.first_name}!\n"
                           'Этот бот конвертирует выбранную вами валюту и криптовалюту.\n'
                           "Чтобы узнать как работать с ботом, нажмите /help")
 
@@ -24,7 +25,6 @@ def starter(message: telebot.types.Message):
 def helper(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
 
     bot.send_message(message.chat.id, 'Чтобы воспользоваться конвертором, введите данные в формате:\n'
@@ -39,9 +39,8 @@ def helper(message: telebot.types.Message):
 def values(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
-    
+
     text = 'Доступные валюты:\n'
     for key in sorted(cur.keys()):
         text = '\n'.join((text, key))
@@ -52,9 +51,8 @@ def values(message: telebot.types.Message):
 def crypto(message: telebot.types.Message):
     user_id = message.from_user.id
     user_name = message.from_user.full_name
-    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
     logger.info(f'{user_id=} | {user_name=} | {time.asctime()}')
-    
+
     text = 'Доступные криптовалюты:\n'
     for key in cryp.keys():
         text = '\n'.join((text, key))
@@ -63,7 +61,8 @@ def crypto(message: telebot.types.Message):
 
 @bot.message_handler(content_types=['text'])
 def convert(message: telebot.types.Message):
-    global reply
+    user_name = message.from_user.full_name
+    global reply, value
     try:
         value = message.text.lower().split(', ')
 
@@ -74,19 +73,22 @@ def convert(message: telebot.types.Message):
         total_base = Converter.get_price(quote, base, amount)
 
         if total_base is None:
-            raise APIException('Вероятнее всего, не получится конвертировать данные валюты. Приносим извинения')
+            raise APIException('Вероятнее всего, не получится конвертировать данные валюты. Приносим извинения!')
 
     except APIException as e:
+        logger.error(f'{user_name=} | {e} | {value} | {time.asctime()}')
+
         bot.reply_to(message, f'Что-то написано неправильно, проверьте, пожалуйста ☺️\n\n{e}')
+
     except Exception as e:
+        logger.error(f'{user_name=} | {e} | {value} | {time.asctime()}')
+
         bot.reply_to(message, f'Упс, что-то пошло не так 🥺\n{e}')
     else:
         reply = f'{amount} {val[quote]} в {val[base]} - {total_base}'
         bot.reply_to(message, reply)
 
-    user_name = message.from_user.full_name
-    logger.add('logs.log', format='{level} | {time} | {message}', level='INFO')
-    logger.info(f'{user_name=} | {reply=} | {time.asctime()}')
+        logger.info(f'{user_name=} | {value=} | {reply=} | {time.asctime()}')
 
 
 @bot.message_handler(content_types=['voice'])
